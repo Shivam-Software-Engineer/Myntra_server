@@ -2,10 +2,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("../../Models/Cleint/userModel");
+const { apiInstance } = require("../../Configurations/mailConfig");
 
-const {
-  transporter,
-} = require("../../Configurations/mailConfig");
 
 
 // =====================================================
@@ -90,86 +88,123 @@ const sendOtpEmail = async (
   otp
 ) => {
 
-  await transporter.sendMail({
+  try {
 
-    from:
-      process.env.SMTP_USER,
+    const sendSmtpEmail = {
 
-    to:
-      email,
+      sender: {
+        name: process.env.BREVO_SENDER_NAME,
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
 
-    subject:
-      "Your OTP for Registration",
+      to: [
+        {
+          email: email,
+        },
+      ],
 
-    html: `
+      subject:
+        "Your OTP for Registration",
 
-      <div style="
-        max-width: 500px;
-        margin: auto;
-        font-family: Arial, sans-serif;
-        border: 1px solid #eeeeee;
-        padding: 30px;
-        border-radius: 10px;
-      ">
+      htmlContent: `
 
-        <h2 style="
-          color: #ff3f6c;
-          margin-bottom: 20px;
+        <div style="
+          max-width: 500px;
+          margin: auto;
+          font-family: Arial, sans-serif;
+          border: 1px solid #eeeeee;
+          padding: 30px;
+          border-radius: 10px;
         ">
 
-          Email Verification
+          <h2 style="
+            color: #ff3f6c;
+            margin-bottom: 20px;
+          ">
 
-        </h2>
+            Email Verification
 
-
-        <p style="
-          color: #555555;
-          font-size: 15px;
-        ">
-
-          Your OTP for email verification is:
-
-        </p>
+          </h2>
 
 
-        <h1 style="
-          letter-spacing: 8px;
-          color: #333333;
-          font-size: 32px;
-        ">
+          <p style="
+            color: #555555;
+            font-size: 15px;
+          ">
 
-          ${otp}
+            Your OTP for email verification is:
 
-        </h1>
-
-
-        <p style="
-          color: #555555;
-        ">
-
-          This OTP is valid for 10 minutes.
-
-        </p>
+          </p>
 
 
-        <p style="
-          color: #777777;
-          font-size: 13px;
-        ">
+          <h1 style="
+            letter-spacing: 8px;
+            color: #333333;
+            font-size: 32px;
+          ">
 
-          If you did not request this OTP,
-          please ignore this email.
+            ${otp}
 
-        </p>
+          </h1>
 
-      </div>
 
-    `,
+          <p style="
+            color: #555555;
+          ">
 
-  });
+            This OTP is valid for 10 minutes.
+
+          </p>
+
+
+          <p style="
+            color: #777777;
+            font-size: 13px;
+          ">
+
+            If you did not request this OTP,
+            please ignore this email.
+
+          </p>
+
+        </div>
+
+      `,
+    };
+
+
+    // ==========================================
+    // SEND EMAIL USING BREVO
+    // ==========================================
+
+    const response =
+      await apiInstance.sendTransacEmail(
+        sendSmtpEmail
+      );
+
+
+    console.log(
+      "OTP Email Sent Successfully:",
+      response
+    );
+
+
+    return response;
+
+
+  } catch (error) {
+
+    console.error(
+      "Brevo OTP Email Error:",
+      error.response?.body ||
+      error.message
+    );
+
+    throw error;
+
+  }
 
 };
-
 
 // =====================================================
 // SEND FORGOT PASSWORD OTP EMAIL
@@ -180,93 +215,131 @@ const sendForgotPasswordOtpEmail = async (
   otp
 ) => {
 
-  await transporter.sendMail({
+  try {
 
-    from:
-      process.env.SMTP_USER,
+    const sendSmtpEmail = {
 
-    to:
-      email,
+      sender: {
+        name: process.env.BREVO_SENDER_NAME,
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
 
-    subject:
-      "Your OTP to Reset Password",
+      to: [
+        {
+          email: email,
+        },
+      ],
 
-    html: `
+      subject:
+        "Your OTP to Reset Password",
 
-      <div style="
-        max-width: 500px;
-        margin: auto;
-        font-family: Arial, sans-serif;
-        border: 1px solid #eeeeee;
-        padding: 30px;
-        border-radius: 10px;
-      ">
+      htmlContent: `
 
-        <h2 style="
-          color: #ff3f6c;
-          margin-bottom: 20px;
+        <div style="
+          max-width: 500px;
+          margin: auto;
+          font-family: Arial, sans-serif;
+          border: 1px solid #eeeeee;
+          padding: 30px;
+          border-radius: 10px;
         ">
 
-          Password Reset Request
+          <h2 style="
+            color: #ff3f6c;
+            margin-bottom: 20px;
+          ">
 
-        </h2>
+            Password Reset Request
 
-
-        <p style="
-          color: #555555;
-          font-size: 15px;
-        ">
-
-          We received a request to reset your password.
-
-        </p>
+          </h2>
 
 
-        <p style="
-          color: #555555;
-          font-size: 15px;
-        ">
+          <p style="
+            color: #555555;
+            font-size: 15px;
+          ">
 
-          Your OTP for password reset is:
+            We received a request to reset your password.
 
-        </p>
-
-
-        <h1 style="
-          letter-spacing: 8px;
-          color: #333333;
-          font-size: 32px;
-        ">
-
-          ${otp}
-
-        </h1>
+          </p>
 
 
-        <p style="
-          color: #555555;
-        ">
+          <p style="
+            color: #555555;
+            font-size: 15px;
+          ">
 
-          This OTP is valid for 10 minutes.
+            Your OTP for password reset is:
 
-        </p>
+          </p>
 
 
-        <p style="
-          color: #777777;
-          font-size: 13px;
-        ">
+          <h1 style="
+            letter-spacing: 8px;
+            color: #333333;
+            font-size: 32px;
+          ">
 
-          If you did not request a password reset,
-          please ignore this email.
+            ${otp}
 
-        </p>
+          </h1>
 
-      </div>
 
-    `,
+          <p style="
+            color: #555555;
+          ">
 
-  });
+            This OTP is valid for 10 minutes.
+
+          </p>
+
+
+          <p style="
+            color: #777777;
+            font-size: 13px;
+          ">
+
+            If you did not request a password reset,
+            please ignore this email.
+
+          </p>
+
+        </div>
+
+      `,
+    };
+
+
+    // ==========================================
+    // SEND EMAIL USING BREVO
+    // ==========================================
+
+    const response =
+      await apiInstance.sendTransacEmail(
+        sendSmtpEmail
+      );
+
+
+    console.log(
+      "Forgot Password OTP Email Sent Successfully:",
+      response
+    );
+
+
+    return response;
+
+
+  } catch (error) {
+
+    console.error(
+      "Brevo Forgot Password OTP Email Error:",
+      error.response?.body ||
+      error.message
+    );
+
+    throw error;
+
+  }
 
 };
 

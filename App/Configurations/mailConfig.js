@@ -1,12 +1,12 @@
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 
-// Create a transporter using SMTP
-const transporter = nodemailer.createTransport({
-     service: "gmail",
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-});
+const apiInstance = new brevo.TransactionalEmailsApi();
 
-module.exports = { transporter }
+apiInstance.setApiKey(
+    brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+);
+
+module.exports = {
+    apiInstance,
+};
