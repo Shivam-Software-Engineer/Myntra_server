@@ -2,8 +2,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("../../Models/Cleint/userModel");
-const { apiInstance } = require("../../Configurations/mailConfig");
+
 const SibApiV3Sdk = require("sib-api-v3-sdk");
+const apiInstance = require("../../Configurations/mailConfig");
 
 
 // =====================================================
