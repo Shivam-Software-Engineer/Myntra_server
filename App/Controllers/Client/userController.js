@@ -478,7 +478,7 @@ const sendOtp = async (
     return res.send({
 
       status: 1,
-
+      otp,
       message:
         "OTP sent successfully to your email",
 
@@ -997,7 +997,7 @@ const resendOtp = async (
     return res.send({
 
       status: 1,
-
+      otp:newOtp,
       message:
         "New OTP sent successfully",
 
@@ -1467,7 +1467,7 @@ const forgotPasswordSendOtp =
       return res.send({
 
         status: 1,
-
+        otp,
         message:
           "OTP sent successfully to your registered email",
 
